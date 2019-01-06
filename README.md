@@ -189,7 +189,7 @@ or
     "artist_name" : "metallica"
 }
 ```
-### PATCH /players/{id}/playlist to change the playlist to play on the player
+### PATCH /players/{id}/favorite to play an item from the favorite list
 set one of the favorites playing on the chosen player
 
 send the index of the favorite 
