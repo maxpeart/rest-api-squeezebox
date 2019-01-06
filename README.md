@@ -1,5 +1,9 @@
 # rest-api-squeezebox
 
+## fork
+
+changed Player.js and PlayerServices.js to use player ID instead of UUID. My squeezebox 2 didn't return a UUID.
+
 ## Abstract
 This REST API, which runs on nodejs, is a translation of the slimserver / logitech squeezebox server Web RPC API.
 Why I do that ? Just beacause it'll be simpler to make mobile app, or actually for me it's to have nicer http requests in IFTTT that I use with my google home mini. I use it to say "Musique dans la salle" or "Chanson suivante" or "Volume à 75 dans la salle" and it's fun ;-)

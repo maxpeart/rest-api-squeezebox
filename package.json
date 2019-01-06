@@ -1,13 +1,13 @@
 {
   "name": "rest-api-squeezebox",
   "version": "1.1.0",
-  "description": "This REST API is a translation of the slimserver / squeezebox server JSON RPC API.",
+  "description": "This REST API is a translation of the slimserver / squeezebox server JSON RPC API. uses player ids instead of uuids to play nice with squeezebox 2",
   "repository": {
     "type": "git",
-    "url": "https://github.com/legrosmanu/rest-api-squeezebox"
+    "url": "https://github.com/maxpeart/rest-api-squeezebox"
   },
   "scripts": {
-    "start": "node src/index.js 192.168.1.11:2311 2312"
+    "start": "node src/index.js raspberrypi.lan:9000 8080"
   },
   "author": "Emmanuel LEGROS",
   "license": "Apache-2.0",
