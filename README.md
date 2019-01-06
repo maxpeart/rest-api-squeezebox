@@ -1,8 +1,10 @@
 # rest-api-squeezebox
 
-## fork
+## changes in this fork
 
 changed Player.js and PlayerServices.js to use player ID instead of UUID. My squeezebox 2 didn't return a UUID.
+
+added GET /favorites and PATCH /players/:id/favorite methods to get favorites and to play one of them
 
 ## Abstract
 This REST API, which runs on nodejs, is a translation of the slimserver / logitech squeezebox server Web RPC API.
@@ -33,7 +35,6 @@ Get players informations. The array returned looks like :
 [
     {
         "name": "Salle chacha",
-        "uuid": "********************************",
         "id": "**:**:**:**:**:**",
         "ip": "192.168.*.*:*****",
         "model": "Squeezebox Touch",
@@ -59,7 +60,6 @@ Get players informations. The array returned looks like :
     },
     {
     "name": "Musique salle de bain",
-    "uuid": "********************************",
     "id": "**:**:**:**:**:**",
     "ip": "192.168.*.*:*****",
     "model": "Squeezebox Radio",
@@ -86,12 +86,11 @@ Get players informations. The array returned looks like :
 ]
 ```
 
-### GET /players/{uuid} just to have the information to display
+### GET /players/{id} just to have the information to display
 Get informations for one player. The object returned looks like : 
 ```
 {
     "name": "Musique salle de bain",
-    "uuid": "********************************",
     "id": "**:**:**:**:**:**",
     "ip": "192.168.*.*:*****",
     "model": "Squeezebox Radio",
@@ -117,7 +116,28 @@ Get informations for one player. The object returned looks like :
 }
 ```
 
-### PATCH /players/{uuid} to play or stop your music, or to change the song to play
+### GET /favorites
+Get list of favorites
+```
+[
+    {
+        "id": "157b8bae.0",
+        "name": "BBC Radio Fourfm (mp3 128kbps)",
+        "type": "audio",
+        "isaudio": 1,
+        "hasitems": 0
+    },
+    {
+        "id": "157b8bae.1",
+        "name": "BBC 6music (mp3 128kbps)",
+        "type": "audio",
+        "isaudio": 1,
+        "hasitems": 0
+    }
+]
+```
+
+### PATCH /players/{id} to play or stop your music, or to change the song to play
 Actually, you just can change the value of play_state and the index_in_playlist of the song_currently_played object. So the body of the request could look like  :
 ```
 {
@@ -130,8 +150,8 @@ Actually, you just can change the value of play_state and the index_in_playlist 
 If you change the value of play_state of you player, it will play or stop the music on your player.
 Notice that it's possible to change the song played for the next in playlist, if you send "+1" for song_currently_played.index_in_playlist.
 
-### PATCH /players/{uuid}/mixer to turn off or on a player, or just to change the volume
-PATCH /players/{uuid}/mixer is to patch the mixer :-). So you can use it to turn on or off your player, or change volume, bass and treble. For example, if you want turn off your player, you can send :
+### PATCH /players/{id}/mixer to turn off or on a player, or just to change the volume
+PATCH /players/{id}/mixer is to patch the mixer :-). So you can use it to turn on or off your player, or change volume, bass and treble. For example, if you want turn off your player, you can send :
 ```
 {
     "power": "off"
@@ -143,10 +163,10 @@ Or, if you want to change the volume :
     "volume": "15"
 }
 ```
-Refer to the GET /players/{uuid} to see what is the mixer object.
+Refer to the GET /players/{id} to see what is the mixer object.
 
 
-### PATCH /players/{uuid}/playlist to change the playlist to play on the player
+### PATCH /players/{id}/playlist to change the playlist to play on the player
 You can change the playlist to play in different ways.
 1. With the path of a playlist.
 2. With the name of an artist or the title of an album, which will be used for a search on your slimserver.
@@ -167,6 +187,23 @@ or
     "artist_name" : "metallica"
 }
 ```
+### PATCH /players/{id}/playlist to change the playlist to play on the player
+set one of the favorites playing on the chosen player
 
-### DELETE /player/{uuid}/playlist to remove all the tracks on the playlist
+send the index of the favorite 
+
+play the first item:
+```
+{
+    "play" : "item_id:0"
+}
+```
+
+play the second item:
+```
+{
+    "play" : "item_id:1"
+}
+```
+### DELETE /player/{id}/playlist to remove all the tracks on the playlist
 Just clear all the tracks with the DELETE verb.

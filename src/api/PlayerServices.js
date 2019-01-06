@@ -35,6 +35,16 @@ exports.setEndPoints = function (app) {
         }
     });
 
+    app.get('/favorites', requireAuthentication, async (req, res) => {
+        try {
+            const favorites = await SlimHelper.sendRequest(["-", ["favorites", "items", 0, 10, ""]]);
+            res.send(favorites.loop_loop);
+        } catch (error) {
+            let errorToSend = errorManager(error, 'GET', '/favorites');
+            res.status(errorToSend.codeHTTP).send(errorToSend);
+        }   
+    });
+
     // According to the body, we had on an array the promises to execute, and then execute them.
     app.patch('/players/:id', requireAuthentication, async (req, res) => {
         try {
@@ -115,6 +125,24 @@ exports.setEndPoints = function (app) {
             res.status(errorToSend.codeHTTP).send(errorToSend);
         }
     });
+
+    app.patch('/players/:id/favorite', requireAuthentication, async (req, res) => {
+        try {
+            let player = new Player(req.params.id);
+            await player.init();
+            let changesToDo = [];
+            if (req.body.play !== undefined) {
+                var songPlayed = player.getSongPlayed();
+                changesToDo.push(songPlayed.playFav(player.id, req.body.play)); // "item_id:0"
+            }
+            await Promise.all(changesToDo, player.init());
+            await player.init();
+            res.send(player.toAPI());
+        } catch (error) {
+            let errorToSend = errorManager(error, 'PATCH', '/player/:id/favorite');
+            res.status(errorToSend.codeHTTP).send(errorToSend);
+        }
+    });    
 
 };
 

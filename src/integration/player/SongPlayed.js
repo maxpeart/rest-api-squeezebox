@@ -44,6 +44,10 @@ module.exports = class SongPlayed {
         }
     }
 
+    async playFav(id, fav){
+        await SlimHelper.sendRequest([id, ['favorites', 'playlist', 'play', fav]]);
+    }
+
     toAPI() {
         return {
             index_in_playlist: this.indexInPlaylist,
