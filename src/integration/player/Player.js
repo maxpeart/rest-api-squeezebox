@@ -5,8 +5,8 @@ let Playlist = require('./Playlist');
 
 module.exports = class Player {
 
-    constructor(uuid) {
-        this.uuid = uuid;
+    constructor(id) {
+        this.id = id;
     }
 
     // Call slim server to get the data for this player.
@@ -22,7 +22,7 @@ module.exports = class Player {
 
         let player = null;
         for (let it = 0; it < resultPlayers.players_loop.length && player === null; it++) {
-            if (resultPlayers.players_loop[it].uuid === this.uuid) {
+            if (resultPlayers.players_loop[it].playerid === this.id) {
                 player = resultPlayers.players_loop[it];
             }
         }
@@ -30,7 +30,7 @@ module.exports = class Player {
         if (player === null) {
             let error = {
                 codeHTTP: 404,
-                message: "player not found on Player.init() " + this.uuid
+                message: "player not found on Player.init() " + this.id
             };
             throw error;
         } else {
@@ -76,7 +76,7 @@ module.exports = class Player {
         } else {
             let error = {
                 codeHTTP: 400,
-                message: "the power for the player " + this.uuid + " has to be on or off"
+                message: "the power for the player " + this.id + " has to be on or off"
             };
             throw error;
         }
@@ -90,7 +90,7 @@ module.exports = class Player {
         } else {
             let error = {
                 codeHTTP: 400,
-                message: "the play state for the player " + this.uuid + " has to be play, stop or pause"
+                message: "the play state for the player " + this.id + " has to be play, stop or pause"
             };
             throw error;
         }

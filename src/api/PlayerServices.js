@@ -10,7 +10,7 @@ exports.setEndPoints = function (app) {
         try {
             const resultNbPlayers = await SlimHelper.sendRequest(['-', ['player', 'count', '?']]);
             const resultPlayers = await SlimHelper.sendRequest(['-', ['players', '0', resultNbPlayers._count]]);
-            let players = resultPlayers.players_loop.map(playerFromSlim => new Player(playerFromSlim.uuid));
+            let players = resultPlayers.players_loop.map(playerFromSlim => new Player(playerFromSlim.playerid));
             const initPlayerPromises = players.map(player => player.init());
             await Promise.all(initPlayerPromises);
             let playersToSend = [];
@@ -24,21 +24,21 @@ exports.setEndPoints = function (app) {
         }
     });
 
-    app.get('/players/:uuid', requireAuthentication, async (req, res) => {
+    app.get('/players/:id', requireAuthentication, async (req, res) => {
         try {
-            let player = new Player(req.params.uuid);
+            let player = new Player(req.params.id);
             await player.init();
             res.send(player.toAPI());
         } catch (error) {
-            let errorToSend = errorManager(error, 'GET', '/players/:uuid');
+            let errorToSend = errorManager(error, 'GET', '/players/:id');
             res.status(errorToSend.codeHTTP).send(errorToSend);
         }
     });
 
     // According to the body, we had on an array the promises to execute, and then execute them.
-    app.patch('/players/:uuid', requireAuthentication, async (req, res) => {
+    app.patch('/players/:id', requireAuthentication, async (req, res) => {
         try {
-            let player = new Player(req.params.uuid);
+            let player = new Player(req.params.id);
             await player.init();
             let changesToDo = [];
             if (req.body.play_state !== undefined) changesToDo.push(player.setPlayState(req.body.play_state));
@@ -55,15 +55,15 @@ exports.setEndPoints = function (app) {
             await Promise.all(changesToDo);
             res.sendStatus(204);
         } catch (error) {
-            let errorToSend = errorManager(error, 'PATCH', '/players/:uuid');
+            let errorToSend = errorManager(error, 'PATCH', '/players/:id');
             res.status(errorToSend.codeHTTP).send(errorToSend);
         }
     });
 
     // To change the playlist to play on the player, this endpoint wait the path of the new playlist
-    app.patch('/players/:uuid/playlist', requireAuthentication, async (req, res) => {
+    app.patch('/players/:id/playlist', requireAuthentication, async (req, res) => {
         try {
-            let player = new Player(req.params.uuid);
+            let player = new Player(req.params.id);
             await player.init();
             if (req.body.path !== undefined) {
                 await player.getPlaylist().changePath(req.body.path);
@@ -80,27 +80,27 @@ exports.setEndPoints = function (app) {
             }
             res.sendStatus(204);
         } catch (error) {
-            let errorToSend = errorManager(error, 'PATCH', '/players/:uuid/playlist');
+            let errorToSend = errorManager(error, 'PATCH', '/players/:id/playlist');
             res.status(errorToSend.codeHTTP).send(errorToSend);
         }
     });
 
-    app.delete('/players/:uuid/playlist', requireAuthentication, async (req, res) => {
+    app.delete('/players/:id/playlist', requireAuthentication, async (req, res) => {
         try {
-            let player = new Player(req.params.uuid);
+            let player = new Player(req.params.id);
             await player.init();
             await player.getPlaylist().clear();
             res.sendStatus(204);
         } catch (error) {
-            let errorToSend = errorManager(error, 'DELETE', '/players/:uuid/playlist');
+            let errorToSend = errorManager(error, 'DELETE', '/players/:id/playlist');
             res.status(errorToSend.codeHTTP).send(errorToSend);
         }
     });
 
     // According to the body, we had on an array the promises to execute, and then execute them.
-    app.patch('/players/:uuid/mixer', requireAuthentication, async (req, res) => {
+    app.patch('/players/:id/mixer', requireAuthentication, async (req, res) => {
         try {
-            let player = new Player(req.params.uuid);
+            let player = new Player(req.params.id);
             await player.init();
             let mixer = await player.getMixer();
             let changesToDo = [];
@@ -111,7 +111,7 @@ exports.setEndPoints = function (app) {
             await Promise.all(changesToDo);
             res.sendStatus(204);
         } catch (error) {
-            let errorToSend = errorManager(error, 'PATCH', '/players/:uuid/mixer');
+            let errorToSend = errorManager(error, 'PATCH', '/players/:id/mixer');
             res.status(errorToSend.codeHTTP).send(errorToSend);
         }
     });
