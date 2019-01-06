@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:latest
+FROM node:8-alpine AS dist
 
 # Create app directory
 WORKDIR /usr/src/app

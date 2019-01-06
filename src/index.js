@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors');
 var http = require('http');
 var bodyParser = require('body-parser');
 
@@ -6,7 +7,9 @@ var PlayerAPI = require('./api/PlayerServices');
 
 var app = express();
 
+app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
+
 
 if (process.argv.length < 4) {
     console.log("ERROR : Check the parameters. You have to use 'node {squeezebox_server_url} {port_for_your_api}'");
