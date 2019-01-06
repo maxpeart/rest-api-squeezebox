@@ -6,6 +6,8 @@ changed Player.js and PlayerServices.js to use player ID instead of UUID. My squ
 
 added GET /favorites and PATCH /players/:id/favorite methods to get favorites and to play one of them
 
+docker file. needs work to externalise token, port, LMS host, port from package.json 
+
 ## Abstract
 This REST API, which runs on nodejs, is a translation of the slimserver / logitech squeezebox server Web RPC API.
 Why I do that ? Just beacause it'll be simpler to make mobile app, or actually for me it's to have nicer http requests in IFTTT that I use with my google home mini. I use it to say "Musique dans la salle" or "Chanson suivante" or "Volume à 75 dans la salle" and it's fun ;-)
@@ -207,3 +209,15 @@ play the second item:
 ```
 ### DELETE /player/{id}/playlist to remove all the tracks on the playlist
 Just clear all the tracks with the DELETE verb.
+
+## Docker
+
+build with
+```
+docker build -t rest-api-squeezebox .
+```
+
+run with
+```
+docker run -p 8080:8080 rest-api-squeezebox
+```
