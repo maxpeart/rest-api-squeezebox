@@ -1,4 +1,3 @@
-var Security = require('./token');
 let SlimHelper = require('../slim-server-wrapper/SlimHelper');
 var Player = require('../integration/player/Player');
 
@@ -163,7 +162,7 @@ var errorManager = (error, HTTPMethod, URI) => {
 
 // Simple security - just check a token.
 var requireAuthentication = (req, res, next) => {
-    if (req.query.token == Security.token) {
+    if (req.query.token == process.env.TOKEN) {
         next();
     } else {
         res.sendStatus(403);

@@ -3,6 +3,8 @@ var cors = require('cors');
 var http = require('http');
 var bodyParser = require('body-parser');
 
+require('dotenv').config()
+
 var PlayerAPI = require('./api/PlayerServices');
 
 var app = express();

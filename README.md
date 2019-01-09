@@ -8,6 +8,12 @@ added GET /favorites and PATCH /players/:id/favorite methods to get favorites an
 
 docker file. needs work to externalise token, port, LMS host, port from package.json 
 
+token moved to a .env file. create this file in the project root
+
+```
+TOKEN=you-token
+```
+
 ## Abstract
 This REST API, which runs on nodejs, is a translation of the slimserver / logitech squeezebox server Web RPC API.
 Why I do that ? Just beacause it'll be simpler to make mobile app, or actually for me it's to have nicer http requests in IFTTT that I use with my google home mini. I use it to say "Musique dans la salle" or "Chanson suivante" or "Volume à 75 dans la salle" and it's fun ;-)
@@ -22,12 +28,6 @@ In fact, notice in package.json the start script is "node src/index.js 192.168.1
 Personnaly, I don't use the default port (9000) for my server, just for security reason.
 
 2312 in the command line means that the API will be accessible in the 2312 port. Of course, you can change it for 8080.
-
-Notice too a file (src/api/token.js) is not shared on github. You have to create this file which must contain the variable "token". It is used like a password. You will add it in every http request with the query param "token" (like GET /players?token=toto). So the file token.js is like :
-```
-exports.token = "what-a-token";
-```
-It's not a good solution for security. It is just for waiting for a better solution.
 
 ## Endpoint that you can use
 
