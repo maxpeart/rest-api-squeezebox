@@ -13,15 +13,23 @@ app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
 
 
-if (process.argv.length < 4) {
-    console.log("ERROR : Check the parameters. You have to use 'node {squeezebox_server_url} {port_for_your_api}'");
+if (!process.env.LMS) {
+    console.error("ERROR : logitechmediaserver URL not set");
+    return;
+}
+
+if (!process.env.PORT) {
+    console.error("ERROR : port not set");
+    return;
+}
+if (!process.env.TOKEN) {
+    console.error("ERROR : no token found");
     return;
 }
 
 let SlimHelper = require('./slim-server-wrapper/SlimHelper');
-SlimHelper.setUrl(process.argv[2]);
+SlimHelper.setUrl(process.env.LMS);
 
 PlayerAPI.setEndPoints(app);
 
-var port = process.env.PORT || process.argv[3];
-http.createServer(app).listen(port);
+http.createServer(app).listen(process.env.PORT);

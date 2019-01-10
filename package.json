@@ -7,7 +7,7 @@
     "url": "https://github.com/maxpeart/rest-api-squeezebox"
   },
   "scripts": {
-    "start": "node src/index.js 192.168.1.6:9000 8080"
+    "start": "node src/index.js"
   },
   "author": "Emmanuel LEGROS",
   "license": "Apache-2.0",
