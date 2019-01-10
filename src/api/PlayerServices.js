@@ -9,14 +9,14 @@ exports.setEndPoints = function (app) {
         try {
             const resultNbPlayers = await SlimHelper.sendRequest(['-', ['player', 'count', '?']]);
             const resultPlayers = await SlimHelper.sendRequest(['-', ['players', '0', resultNbPlayers._count]]);
-            let players = resultPlayers.players_loop.map(playerFromSlim => new Player(playerFromSlim.playerid));
-            const initPlayerPromises = players.map(player => player.init());
+            let players = resultPlayers.count > 0 ? resultPlayers.players_loop.map(playerFromSlim => new Player(playerFromSlim.playerid)) : [];
+            const initPlayerPromises = players ? players.map(player => player.init()) : [];
             await Promise.all(initPlayerPromises);
             let playersToSend = [];
             for (let player of players) {
                 playersToSend.push(player.toAPI());
             }
-            res.send(playersToSend);
+            res.send(playersToSend.length > 0 ? playersToSend : "no players");
         } catch (error) {
             let errorToSend = errorManager(error, 'GET', '/players');
             res.status(errorToSend.codeHTTP).send(errorToSend);
