@@ -25,7 +25,7 @@ const stop = {
 const invalidPlayState = {
     play_state: "invalid"
 }
-const playerId = "00:16:3e:6e:85:d0";
+const playerId = "00:16:3e:6e:85:d0"; // squeeezlite
 const invalidPlayerId = "00:00:00:00";
 const invalidPath = {
     path: "{_234234"
@@ -34,10 +34,10 @@ const validPath = {
     path: "/foo/bar"
 }
 const albumTitle = {
-    album_title: "foo"
+    album_title: "Rave Tapes"
 }
 const artistName = {
-    artist_name: "foo"
+    artist_name: "Mogwai"
 }
 const invalidPlaylist = {
     invalid: "foo"
@@ -225,12 +225,12 @@ describe("PATCH /players/:id with invalid ID", () => {
 });
 
 describe.skip("PATCH /players/:id without body", () => {
-    it("should return 404", (done) => {
+    it("should return 400", (done) => {
         chai.request(app)
             .patch("/players/" + playerId)
             .query(token)
             .end((err, res) => {
-                assert.equal(res.status, 404);
+                assert.equal(res.status, 400);
                 done();
             });
     })
@@ -247,6 +247,16 @@ describe("PATCH /players/:id play", () => {
                 done();
             });
     })
+    it("should start playing", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.equal(res.body.play_state, "play")
+                done();
+            });
+    })
 });
 
 describe("PATCH /players/:id pause", () => {
@@ -257,6 +267,16 @@ describe("PATCH /players/:id pause", () => {
             .query(token)
             .end((err, res) => {
                 assert.equal(res.status, 204);
+                done();
+            });
+    })
+    it("should pause", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.equal(res.body.play_state, "pause")
                 done();
             });
     })
@@ -273,8 +293,17 @@ describe("PATCH /players/:id stop", () => {
                 done();
             });
     })
+    it("should stop", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.equal(res.body.play_state, "stop")
+                done();
+            });
+    })
 });
-
 
 describe("PATCH /players/:id invalid play state", () => {
     it("should return 400", (done) => {
@@ -362,6 +391,16 @@ describe("PATCH /players/:id/playlist with valid album title", () => {
                 assert.equal(res.status, 204);
                 done();
             });
+    });
+    it("should return album title", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.equal(res.body.song_currently_played.album, albumTitle.album_title)
+                done();
+            });
     })
 });
 
@@ -373,6 +412,16 @@ describe("PATCH /players/:id/playlist with valid artist name", () => {
             .send(artistName)
             .end((err, res) => {
                 assert.equal(res.status, 204);
+                done();
+            });
+    });
+    it("should return artist name", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.equal(res.body.song_currently_played.artist, artistName.artist_name)
                 done();
             });
     })
@@ -423,12 +472,17 @@ describe("DELETE /players/:id/playlist", () => {
                 assert.equal(res.status, 204);
                 done();
             });
-        /*
-            need to add item to play list. 
-            assert its presence. 
-            remove it. 
-            assert its gone
-        */
+    })
+    it("should return empty playlist", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.isUndefined(res.body.song_currently_played.path)
+                assert.isUndefined(res.body.song_currently_played.title)
+                done();
+            });
     })
 });
 
@@ -467,6 +521,16 @@ describe("PATCH /players/:id/mixer with power off", () => {
                 done();
             });
     })
+    it("should power off", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.equal(res.body.mixer.power, "off");
+                done();
+            });
+    });
 });
 
 describe("PATCH /players/:id/mixer with power on", () => {
@@ -480,6 +544,16 @@ describe("PATCH /players/:id/mixer with power on", () => {
                 done();
             });
     })
+    it("should power on", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.equal(res.body.mixer.power, "on");
+                done();
+            });
+    });
 });
 
 describe.skip("PATCH /players/:id/mixer with invalid power state", () => {
@@ -506,19 +580,39 @@ describe("PATCH /players/:id/mixer with volume 0", () => {
                 done();
             });
     })
+    it("should set volume to 0", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.equal(res.body.mixer.volume, 0);
+                done();
+            });
+    });
 });
 
 describe("PATCH /players/:id/mixer with volume 100", () => {
     it("should return 204", (done) => {
         chai.request(app)
             .patch("/players/" + playerId + "/mixer")
-            .send(volumeZero)
+            .send(volumeOneHundred)
             .query(token)
             .end((err, res) => {
                 assert.equal(res.status, 204);
                 done();
             });
     })
+    it("should set volume to 100", (done) => {
+        chai.request(app)
+            .get("/players/" + playerId)
+            .query(token)
+            .end((err, res) => {
+                assert.equal(res.status, 200);
+                assert.equal(res.body.mixer.volume, 100);
+                done();
+            });
+    });
 });
 
 describe.skip("PATCH /players/:id/mixer with volume 101", () => {
@@ -611,7 +705,7 @@ describe("PATCH /players/:id/favorite with first fav", () => {
     })
 });
 
-describe("PATCH /players/:id/favorite with first fav", () => {
+describe("PATCH /players/:id/favorite with second fav", () => {
     it("should return 200 and title of favorite", (done) => {
         chai.request(app)
             .patch("/players/" + playerId + "/favorite")
@@ -626,7 +720,7 @@ describe("PATCH /players/:id/favorite with first fav", () => {
 });
 
 describe.skip("PATCH /players/:id/favorite with invalid favorite", () => {
-    it("should return 404 and title of favorite", (done) => {
+    it("should return 404", (done) => {
         chai.request(app)
             .patch("/players/" + playerId + "/favorite")
             .query(token)
