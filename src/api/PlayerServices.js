@@ -152,11 +152,9 @@ var errorManager = (error, HTTPMethod, URI) => {
     } else {
         errorToSend = {
             codeHTTP: 500,
-            message: 'Ooooppppssss. There is a problem with the ' + HTTPMethod + ' on ' + URI
+            message: 'There is a problem with the ' + HTTPMethod + ' on ' + URI
         };
     }
-    console.log(errorToSend.message);
-    console.log(error);
     return errorToSend;
 };
 

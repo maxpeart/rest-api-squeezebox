@@ -7,7 +7,9 @@
     "url": "https://github.com/maxpeart/rest-api-squeezebox"
   },
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "test": "mocha",
+    "test:watch": "mocha --watch"
   },
   "author": "Emmanuel LEGROS",
   "license": "Apache-2.0",
@@ -16,5 +18,10 @@
     "dotenv": "^6.2.0",
     "express": "^4.16.3",
     "request": "^2.87.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
+    "mocha": "^5.2.0"
   }
 }

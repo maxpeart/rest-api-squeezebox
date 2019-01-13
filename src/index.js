@@ -32,4 +32,6 @@ SlimHelper.setUrl(process.env.LMS);
 
 PlayerAPI.setEndPoints(app);
 
-http.createServer(app).listen(process.env.PORT);
+server = app.listen(process.env.PORT);
+
+module.exports = {app,server};
