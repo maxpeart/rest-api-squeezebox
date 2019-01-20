@@ -1,4 +1,4 @@
-FROM node:8-alpine AS dist
+FROM node:10-alpine AS dist
 
 # Create app directory
 WORKDIR /usr/src/app
