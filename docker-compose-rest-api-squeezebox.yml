@@ -1,0 +1,14 @@
+################################################################################
+# Rest API for logitech media server 
+################################################################################
+version: "3.6"
+
+services:
+  rest-api-squeezebox:
+    build: .
+    image: maxpeart/rest-api-squeezebox
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${SSL_VOLUME}:${SSL_MOUNT}
+    restart: unless-stopped
